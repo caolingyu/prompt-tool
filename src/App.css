@@ -1,0 +1,14 @@
+.layout {
+  min-height: 100vh;
+}
+
+.ant-layout-header {
+  display: flex;
+  align-items: center;
+}
+
+.ant-layout-content {
+  background: #fff;
+  padding: 24px;
+  min-height: 280px;
+} 
