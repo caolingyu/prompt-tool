@@ -1,7 +1,9 @@
 import React from 'react';
-import { Card, Button, message } from 'antd';
+import { Card, Button, message, Typography } from 'antd';
 import { useBazi } from '../contexts/BaziContext';
 import { CopyOutlined } from '@ant-design/icons';
+
+const { Title } = Typography;
 
 export const PromptDisplay: React.FC = () => {
   const { baziData, decadeFate, yearFates } = useBazi();
@@ -43,39 +45,54 @@ export const PromptDisplay: React.FC = () => {
 
   return (
     <Card 
-      title={
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '18px', fontWeight: 'bold' }}>✨ AI分析咒语</span>
-          <Button 
-            type="primary" 
-            icon={<CopyOutlined />}
-            onClick={copyToClipboard}
-            size="large"
-          >
-            复制咒语
-          </Button>
-        </div>
-      }
       style={{ 
         marginBottom: 24,
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-        borderRadius: '8px'
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+        borderRadius: '8px',
+        background: 'rgba(255, 255, 255, 0.9)',
       }}
-      headStyle={{ 
-        background: 'linear-gradient(135deg, #1890ff 0%, #722ed1 100%)',
-        color: 'white',
-        borderTopLeftRadius: '8px',
-        borderTopRightRadius: '8px'
-      }}
+      bodyStyle={{ padding: 0 }}
     >
+      <div style={{
+        background: 'linear-gradient(90deg, #26C6DA 0%, #E91E63 50%, #FFD54F 100%)',
+        padding: '12px 24px',
+        borderTopLeftRadius: '8px',
+        borderTopRightRadius: '8px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+      }}>
+        <Title level={4} style={{ 
+          color: 'white', 
+          margin: 0,
+          fontSize: '24px',
+          textAlign: 'left',
+          letterSpacing: '2px',
+          textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)'
+        }}>✨ AI分析咒语</Title>
+        <Button 
+          type="primary" 
+          icon={<CopyOutlined />}
+          onClick={copyToClipboard}
+          size="large"
+          style={{
+            background: 'rgba(255, 255, 255, 0.2)',
+            borderColor: 'transparent',
+            boxShadow: 'none'
+          }}
+        >
+          复制咒语
+        </Button>
+      </div>
       <div style={{ 
+        padding: '24px',
         whiteSpace: 'pre-wrap',
         fontSize: '16px',
         lineHeight: '1.8',
-        padding: '16px',
         background: '#f8f9fa',
         borderRadius: '4px',
-        border: '1px solid #e8e8e8'
+        border: '1px solid #e8e8e8',
+        margin: '16px'
       }}>
         {generatePrompt()}
       </div>

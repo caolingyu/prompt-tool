@@ -1,13 +1,16 @@
 import React from 'react';
-import { Card } from 'antd';
+import { Card, Typography } from 'antd';
 import { useBazi } from '../contexts/BaziContext';
 import { STEM_COLORS, BRANCH_COLORS } from '../constants/colors';
 import styled from '@emotion/styled';
+
+const { Title } = Typography;
 
 const ChartContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
+  padding: 24px;
 `;
 
 const PillarsContainer = styled.div`
@@ -91,15 +94,30 @@ const BaziChart: React.FC = () => {
 
   return (
     <Card 
-      title="八字排盘" 
-      style={{ marginBottom: 24 }}
-      headStyle={{ 
-        background: 'linear-gradient(135deg, #1890ff 0%, #722ed1 100%)',
-        color: 'white',
-        borderTopLeftRadius: '8px',
-        borderTopRightRadius: '8px'
+      style={{
+        marginBottom: 24,
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+        borderRadius: '8px',
+        background: 'rgba(255, 255, 255, 0.9)',
       }}
+      bodyStyle={{ padding: 0 }}
     >
+      <div style={{
+        background: 'linear-gradient(90deg, #26C6DA 0%, #E91E63 50%, #FFD54F 100%)',
+        padding: '12px 24px',
+        borderTopLeftRadius: '8px',
+        borderTopRightRadius: '8px',
+      }}>
+        <Title level={4} style={{ 
+          color: 'white', 
+          margin: 0,
+          fontSize: '24px',
+          textAlign: 'left',
+          letterSpacing: '2px',
+          textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)'
+        }}>八字排盘</Title>
+      </div>
+
       <ChartContainer>
         <PillarsContainer>
           {pillars.map(({ title, data }, index) => (
