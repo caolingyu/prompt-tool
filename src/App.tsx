@@ -11,7 +11,7 @@ const { Header, Content, Footer } = Layout;
 const { Title } = Typography;
 
 function AppContent() {
-  const { decadeFate, yearFates } = useBazi();
+  const { decadeFate } = useBazi();
 
   return (
     <Layout className="layout" style={{ background: 'var(--background-light)' }}>
