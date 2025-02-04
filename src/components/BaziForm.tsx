@@ -35,7 +35,7 @@ const BaziForm: React.FC = () => {
 
   return (
     <Card 
-      title="生辰八字信息" 
+      title="生辰信息" 
       style={{ 
         marginBottom: 24,
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
@@ -110,7 +110,7 @@ const BaziForm: React.FC = () => {
               transition: 'all 0.3s'
             }}
           >
-            计算八字
+            生成咒语
           </Button>
         </Form.Item>
       </Form>

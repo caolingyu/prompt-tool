@@ -152,7 +152,7 @@ const BaziAnalysis: React.FC = () => {
     <ErrorBoundary>
       <div className="bazi-analysis">
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <Card title="生辰八字信息">
+          <Card title="生辰信息">
             <Form<FormValues>
               form={form}
               onFinish={onFinish}
