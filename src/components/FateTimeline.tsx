@@ -37,20 +37,22 @@ export const FateTimeline: React.FC = () => {
     <Card
       style={{
         marginBottom: 24,
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         borderRadius: '8px',
         background: 'rgba(255, 255, 255, 0.9)',
+        border: '1px solid var(--border-color)'
       }}
       bodyStyle={{ padding: 0 }}
     >
       <div style={{
-        background: 'linear-gradient(90deg, #26C6DA 0%, #E91E63 50%, #FFD54F 100%)',
+        background: 'var(--primary-color)',
         padding: '12px 24px',
         borderTopLeftRadius: '8px',
         borderTopRightRadius: '8px',
+        borderBottom: '2px solid var(--accent-color)'
       }}>
         <Title level={4} style={{ 
-          color: 'white', 
+          color: 'var(--secondary-color)', 
           margin: 0,
           fontSize: '24px',
           textAlign: 'left',
@@ -70,22 +72,22 @@ export const FateTimeline: React.FC = () => {
                   style={{
                     cursor: 'pointer',
                     padding: '12px 20px',
-                    border: `2px solid ${selectedDecade === fate ? '#E91E63' : '#d9d9d9'}`,
+                    border: `2px solid ${selectedDecade === fate ? 'var(--accent-color)' : 'var(--border-color)'}`,
                     borderRadius: '8px',
                     textAlign: 'center',
-                    background: selectedDecade === fate ? 'rgba(233, 30, 99, 0.1)' : 'white',
+                    background: selectedDecade === fate ? 'rgba(34, 162, 195, 0.1)' : 'white',
                     minWidth: '120px',
                     transition: 'all 0.3s',
-                    boxShadow: selectedDecade === fate ? '0 2px 8px rgba(233, 30, 99, 0.2)' : 'none'
+                    boxShadow: selectedDecade === fate ? '0 2px 8px rgba(34, 162, 195, 0.2)' : 'none'
                   }}
                 >
-                  <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px', color: '#333' }}>
+                  <div style={{ fontSize: '28px', fontWeight: 'bold', marginBottom: '8px', color: 'var(--text-primary)' }}>
                     {fate.stem}{fate.branch}
                   </div>
-                  <div style={{ color: '#666' }}>
+                  <div style={{ color: 'var(--text-secondary)' }}>
                     {fate.startAge}岁-{fate.endAge}岁
                   </div>
-                  <div style={{ color: '#999', fontSize: '12px' }}>
+                  <div style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>
                     {fate.startYear}-{fate.endYear}
                   </div>
                 </div>
@@ -100,7 +102,7 @@ export const FateTimeline: React.FC = () => {
             <Title level={5} style={{ 
               marginBottom: 16,
               fontSize: '18px',
-              color: '#333',
+              color: 'var(--text-primary)',
               textAlign: 'center'
             }}>
               {selectedDecade.startYear}-{selectedDecade.endYear} 流年
@@ -112,22 +114,22 @@ export const FateTimeline: React.FC = () => {
                     className="year-fate-card"
                     style={{
                       padding: '12px',
-                      border: '1px solid #E0E0E0',
+                      border: '1px solid var(--border-color)',
                       borderRadius: '8px',
                       textAlign: 'center',
                       background: 'white',
                       transition: 'all 0.3s',
-                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+                      boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)'
                     }}
                   >
                     <div style={{ 
                       fontWeight: 'bold',
                       fontSize: '20px',
-                      color: '#333',
+                      color: 'var(--text-primary)',
                       marginBottom: '4px'
                     }}>{yearFate.stem}{yearFate.branch}</div>
                     <div style={{ 
-                      color: '#666',
+                      color: 'var(--text-secondary)',
                       fontSize: '14px'
                     }}>{yearFate.year}年</div>
                   </div>

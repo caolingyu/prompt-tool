@@ -1,6 +1,13 @@
 @import 'antd/dist/reset.css';
 
 :root {
+  --primary-color: #21373d;
+  --secondary-color: #b0d5df;
+  --accent-color: #22a2c3;
+  --text-primary: #21373d;
+  --text-secondary: #4a6670;
+  --background-light: #f5f8f9;
+  --border-color: rgba(176, 213, 223, 0.3);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', 'Noto Color Emoji';
@@ -10,4 +17,80 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: var(--background-light);
+  color: var(--text-primary);
+}
+
+/* Card styles */
+.ant-card {
+  border-color: var(--border-color) !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.ant-card-head {
+  background: var(--primary-color) !important;
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+.ant-card-head-title {
+  color: white !important;
+  font-size: 18px !important;
+  letter-spacing: 2px !important;
+}
+
+/* Button styles */
+.ant-btn-primary {
+  background: var(--accent-color) !important;
+  border-color: var(--accent-color) !important;
+}
+
+.ant-btn-primary:hover {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+/* Form styles */
+.ant-form-item-label > label {
+  font-size: 16px !important;
+  color: var(--text-primary) !important;
+}
+
+.ant-input,
+.ant-picker {
+  border-color: var(--border-color) !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 8px !important;
+  height: 40px !important;
+  transition: all 0.3s !important;
+}
+
+.ant-input:hover,
+.ant-picker:hover {
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 2px rgba(34, 162, 195, 0.1) !important;
+}
+
+.ant-input:focus,
+.ant-picker-focused {
+  border-color: var(--accent-color) !important;
+  box-shadow: 0 0 0 2px rgba(34, 162, 195, 0.2) !important;
+}
+
+.ant-radio-wrapper {
+  color: var(--text-primary) !important;
+  font-size: 16px !important;
+}
+
+.ant-radio-checked .ant-radio-inner {
+  border-color: var(--accent-color) !important;
+  background-color: var(--accent-color) !important;
+}
+
+.ant-radio:hover .ant-radio-inner {
+  border-color: var(--accent-color) !important;
+}
+
+.ant-form-item-required::before {
+  color: var(--accent-color) !important;
 } 

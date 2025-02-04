@@ -47,41 +47,43 @@ export const PromptDisplay: React.FC = () => {
     <Card 
       style={{ 
         marginBottom: 24,
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         borderRadius: '8px',
         background: 'rgba(255, 255, 255, 0.9)',
+        border: '1px solid var(--border-color)'
       }}
       bodyStyle={{ padding: 0 }}
     >
       <div style={{
-        background: 'linear-gradient(90deg, #26C6DA 0%, #E91E63 50%, #FFD54F 100%)',
+        background: 'var(--primary-color)',
         padding: '12px 24px',
         borderTopLeftRadius: '8px',
         borderTopRightRadius: '8px',
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderBottom: '2px solid var(--accent-color)'
       }}>
         <Title level={4} style={{ 
-          color: 'white', 
+          color: 'var(--secondary-color)', 
           margin: 0,
           fontSize: '24px',
           textAlign: 'left',
           letterSpacing: '2px',
           textShadow: '1px 1px 2px rgba(0, 0, 0, 0.2)'
-        }}>✨ AI分析咒语</Title>
+        }}>✨ AI咒语</Title>
         <Button 
           type="primary" 
           icon={<CopyOutlined />}
           onClick={copyToClipboard}
           size="large"
           style={{
-            background: 'rgba(255, 255, 255, 0.2)',
+            background: 'var(--accent-color)',
             borderColor: 'transparent',
             boxShadow: 'none'
           }}
         >
-          复制咒语
+          
         </Button>
       </div>
       <div style={{ 
@@ -89,10 +91,11 @@ export const PromptDisplay: React.FC = () => {
         whiteSpace: 'pre-wrap',
         fontSize: '16px',
         lineHeight: '1.8',
-        background: '#f8f9fa',
+        background: 'var(--background-light)',
         borderRadius: '4px',
-        border: '1px solid #e8e8e8',
-        margin: '16px'
+        border: '1px solid var(--border-color)',
+        margin: '16px',
+        color: 'var(--text-primary)'
       }}>
         {generatePrompt()}
       </div>

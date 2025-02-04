@@ -96,20 +96,22 @@ const BaziChart: React.FC = () => {
     <Card 
       style={{
         marginBottom: 24,
-        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
         borderRadius: '8px',
         background: 'rgba(255, 255, 255, 0.9)',
+        border: '1px solid var(--border-color)'
       }}
       bodyStyle={{ padding: 0 }}
     >
       <div style={{
-        background: 'linear-gradient(90deg, #26C6DA 0%, #E91E63 50%, #FFD54F 100%)',
+        background: 'var(--primary-color)',
         padding: '12px 24px',
         borderTopLeftRadius: '8px',
         borderTopRightRadius: '8px',
+        borderBottom: '2px solid var(--accent-color)'
       }}>
         <Title level={4} style={{ 
-          color: 'white', 
+          color: 'var(--secondary-color)', 
           margin: 0,
           fontSize: '24px',
           textAlign: 'left',

@@ -14,15 +14,16 @@ function AppContent() {
   const { decadeFate, yearFates } = useBazi();
 
   return (
-    <Layout className="layout" style={{ background: '#B4A0A7' }}>
+    <Layout className="layout" style={{ background: 'var(--background-light)' }}>
       <Header style={{ 
-        background: 'linear-gradient(90deg, #26C6DA 0%, #E91E63 50%, #FFD54F 100%)',
+        background: 'var(--primary-color)',
         textAlign: 'center',
         padding: '20px',
-        height: 'auto'
+        height: 'auto',
+        borderBottom: '3px solid var(--accent-color)'
       }}>
         <Title style={{ 
-          color: 'white', 
+          color: 'var(--secondary-color)', 
           margin: '0 auto',
           fontSize: '36px',
           letterSpacing: '4px',
@@ -36,7 +37,7 @@ function AppContent() {
       <Content style={{ 
         padding: '24px 50px',
         minHeight: 'calc(100vh - 84px - 70px)', // 调整高度以适应新的header高度
-        background: '#B4A0A7'
+        background: 'var(--background-light)'
       }}>
         <BaziForm />
         {decadeFate && (
@@ -49,8 +50,9 @@ function AppContent() {
       </Content>
       <Footer style={{ 
         textAlign: 'center',
-        background: 'transparent',
-        color: 'white'
+        background: 'var(--primary-color)',
+        color: 'var(--secondary-color)',
+        borderTop: '3px solid var(--accent-color)'
       }}>
         玄学咒语生成器 ©{new Date().getFullYear()}
       </Footer>
