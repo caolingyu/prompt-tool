@@ -4,6 +4,7 @@ import BaziChart from './components/BaziChart';
 import { BaziProvider } from './contexts/BaziContext';
 import { FateDisplay } from './components/FateDisplay';
 import { LogDisplay } from './components/LogDisplay';
+import { PromptDisplay } from './components/PromptDisplay';
 import { useBazi } from './contexts/BaziContext';
 import './App.css';
 
@@ -24,11 +25,14 @@ function AppContent() {
         <BaziForm />
         <BaziChart />
         {decadeFate && (
-          <FateDisplay
-            startingAge={decadeFate.startingAge}
-            decadeFates={decadeFate.fates}
-            yearFates={yearFates || []}
-          />
+          <>
+            <FateDisplay
+              startingAge={decadeFate.startingAge}
+              decadeFates={decadeFate.fates}
+              yearFates={yearFates || []}
+            />
+            <PromptDisplay />
+          </>
         )}
         <LogDisplay messages={logs} />
       </Content>
