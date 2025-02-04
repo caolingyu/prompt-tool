@@ -43,19 +43,40 @@ export const PromptDisplay: React.FC = () => {
 
   return (
     <Card 
-      title="分析提示词" 
-      style={{ marginBottom: 24 }}
-      extra={
-        <Button 
-          type="primary" 
-          icon={<CopyOutlined />}
-          onClick={copyToClipboard}
-        >
-          复制
-        </Button>
+      title={
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span style={{ fontSize: '18px', fontWeight: 'bold' }}>✨ AI分析咒语</span>
+          <Button 
+            type="primary" 
+            icon={<CopyOutlined />}
+            onClick={copyToClipboard}
+            size="large"
+          >
+            复制咒语
+          </Button>
+        </div>
       }
+      style={{ 
+        marginBottom: 24,
+        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+        borderRadius: '8px'
+      }}
+      headStyle={{ 
+        background: 'linear-gradient(135deg, #1890ff 0%, #722ed1 100%)',
+        color: 'white',
+        borderTopLeftRadius: '8px',
+        borderTopRightRadius: '8px'
+      }}
     >
-      <div style={{ whiteSpace: 'pre-wrap' }}>
+      <div style={{ 
+        whiteSpace: 'pre-wrap',
+        fontSize: '16px',
+        lineHeight: '1.8',
+        padding: '16px',
+        background: '#f8f9fa',
+        borderRadius: '4px',
+        border: '1px solid #e8e8e8'
+      }}>
         {generatePrompt()}
       </div>
     </Card>

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.3.0",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "antd": "^5.14.1",
     "dayjs": "^1.11.10",
     "lunar-javascript": "^1.6.13",
