@@ -1,5 +1,5 @@
 import { HEAVENLY_STEMS, EARTHLY_BRANCHES, FIVE_ELEMENTS, FIVE_ELEMENTS_RELATIONS, YIN_YANG_GODS, BRANCH_HIDDEN_STEMS } from '../constants/bazi';
-import type { BaziPillar, DecadeFate } from '../types/bazi';
+import type { BaziPillar } from '../types/bazi';
 import dayjs from 'dayjs';
 import { Solar, Lunar } from 'lunar-javascript';
 
@@ -17,8 +17,6 @@ export function getStemGod(dayStem: string, targetStem: string): string {
   if (!dayElement || !targetElement) return '';
   
   const baseGod = FIVE_ELEMENTS_RELATIONS[dayElement][targetElement];
-  
-  const isDayYang = HEAVENLY_STEMS.indexOf(dayStem) % 2 === 0;
   const isTargetYang = HEAVENLY_STEMS.indexOf(targetStem) % 2 === 0;
   
   if (baseGod in YIN_YANG_GODS) {

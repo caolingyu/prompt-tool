@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Form, DatePicker, Radio, Button, Card, Space } from 'antd';
-import dayjs, { Dayjs } from 'dayjs';
+import type { Dayjs } from 'dayjs';
 import { FateDisplay } from '../components/FateDisplay';
 import { PillarsDisplay } from '../components/PillarsDisplay';
 import {

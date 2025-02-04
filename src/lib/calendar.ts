@@ -167,7 +167,7 @@ export function calculateDecadeFate(
   let targetJieqi: Solar | null = null;
   
   for (let i = 0; i < jieqiList.length; i++) {
-    const [name, jieqiDate] = jieqiList[i];
+    const [, jieqiDate] = jieqiList[i];
     if (isForward) { // 阳年男命或阴年女命找下一个节
       if (jieqiDate.getJulianDay() > birthJulianDay) {
         targetJieqi = jieqiDate;

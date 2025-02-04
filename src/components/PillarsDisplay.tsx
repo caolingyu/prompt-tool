@@ -29,12 +29,12 @@ export const PillarsDisplay: React.FC<PillarsDisplayProps> = ({ pillars }) => {
     {
       title: '藏干',
       key: 'hiddenStems',
-      render: (_, record) => record.branchGods.map(([stem, god]) => `${stem}(${god})`).join('、')
+      render: (_, record) => record.branchGods.map(([stem, god]: [string, string]) => `${stem}(${god})`).join('、')
     },
     {
       title: '五行',
       key: 'elements',
-      render: (_, record) => record.elements.filter(e => e).join('、')
+      render: (_, record) => record.elements.filter((e: string) => e).join('、')
     }
   ];
 

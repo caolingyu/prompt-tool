@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Card, List, Typography } from 'antd';
 
 const { Text } = Typography;

@@ -1,6 +1,5 @@
 import React from 'react';
 import { Card, Table } from 'antd';
-import type { BaziPillar } from '../types/bazi';
 import { useBazi } from '../contexts/BaziContext';
 
 const BaziChart: React.FC = () => {

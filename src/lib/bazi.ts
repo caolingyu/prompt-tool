@@ -2,7 +2,6 @@ import {
   HEAVENLY_STEMS, EARTHLY_BRANCHES, LIFE_STAGES, FIVE_ELEMENTS_RELATIONS, YIN_YANG_GODS,
   type HeavenlyStem, type EarthlyBranch, type FiveElement
 } from './constants';
-import type { PillarInfo } from './types';
 
 // 获取五行属性
 export function getFiveElements(stem: HeavenlyStem | "", branch: EarthlyBranch | ""): [FiveElement | "", FiveElement | ""] {
@@ -48,7 +47,6 @@ export function getStemGod(dayStem: HeavenlyStem, targetStem: HeavenlyStem): str
   if (!dayElement || !targetElement) return "";
   
   const baseGod = FIVE_ELEMENTS_RELATIONS[dayElement][targetElement];
-  const isDayYang = HEAVENLY_STEMS.indexOf(dayStem) % 2 === 0;
   const isTargetYang = HEAVENLY_STEMS.indexOf(targetStem) % 2 === 0;
   
   if (baseGod in YIN_YANG_GODS) {
@@ -67,7 +65,7 @@ export function getBranchGods(dayStem: HeavenlyStem, branch: EarthlyBranch): [He
 export function getLifeStage(dayStem: HeavenlyStem, branch: EarthlyBranch): string {
   if (dayStem in LIFE_STAGES) {
     const branchIndex = EARTHLY_BRANCHES.indexOf(branch);
-    return LIFE_STAGES[dayStem][branchIndex];
+    return LIFE_STAGES[dayStem as keyof typeof LIFE_STAGES][branchIndex];
   }
   return "";
 } 

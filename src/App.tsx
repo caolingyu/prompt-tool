@@ -1,4 +1,3 @@
-import React from 'react';
 import { Layout, Typography } from 'antd';
 import BaziForm from './components/BaziForm';
 import BaziChart from './components/BaziChart';
