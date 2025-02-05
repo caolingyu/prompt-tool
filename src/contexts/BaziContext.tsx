@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState } from 'react';
 import type { BaziChart } from '../types/bazi';
 import dayjs from 'dayjs';
 import { calculateBaziChart } from '../utils/baziCalculator';
-import { calculateDecadeFate, calculateYearFate, type DecadeFate, type YearFate } from '../lib/calendar';
+import { calculateDecadeFate, calculateYearFate, calculateTrueSolarTime, type DecadeFate, type YearFate } from '../lib/calendar';
 
 interface LogMessage {
   timestamp: Date;
@@ -15,7 +15,7 @@ interface BaziContextType {
   decadeFate: { startingAge: number; fates: DecadeFate[] } | null;
   yearFates: YearFate[] | null;
   logs: LogMessage[];
-  setBirthDateTime: (date: dayjs.Dayjs, gender: 'male' | 'female') => void;
+  setBirthDateTime: (date: dayjs.Dayjs, gender: 'male' | 'female', birthPlace?: { lng: number; lat: number }, useTrueSolarTime?: boolean) => void;
 }
 
 const BaziContext = createContext<BaziContextType | undefined>(undefined);
@@ -30,13 +30,27 @@ export function BaziProvider({ children }: { children: React.ReactNode }) {
     setLogs(prev => [...prev, { timestamp: new Date(), message, type }]);
   };
 
-  const setBirthDateTime = (date: dayjs.Dayjs, gender: 'male' | 'female') => {
+  const setBirthDateTime = (
+    date: dayjs.Dayjs, 
+    gender: 'male' | 'female',
+    birthPlace?: { lng: number; lat: number },
+    useTrueSolarTime?: boolean
+  ) => {
     try {
       // 清除之前的日志
       setLogs([]);
       
       addLog('开始计算八字...');
-      const chart = calculateBaziChart(date);
+
+      // 如果需要使用真太阳时且提供了出生地信息
+      let calculationTime = date;
+      if (useTrueSolarTime && birthPlace) {
+        addLog(`计算真太阳时 (经度: ${birthPlace.lng})`);
+        calculationTime = calculateTrueSolarTime(date, birthPlace.lng);
+        addLog(`真太阳时计算结果: ${calculationTime.format('YYYY-MM-DD HH:mm:ss')}`);
+      }
+
+      const chart = calculateBaziChart(calculationTime);
       addLog('八字计算完成');
       
       // 计算八字数据
@@ -44,9 +58,9 @@ export function BaziProvider({ children }: { children: React.ReactNode }) {
         ...chart,
         gender,
         lunarDate: {
-          year: date.year(),
-          month: date.month() + 1,
-          day: date.date(),
+          year: calculationTime.year(),
+          month: calculationTime.month() + 1,
+          day: calculationTime.date(),
           yearInGanZhi: `${chart.yearPillar.stem}${chart.yearPillar.branch}`,
           monthInGanZhi: `${chart.monthPillar.stem}${chart.monthPillar.branch}`,
           dayInGanZhi: `${chart.dayPillar.stem}${chart.dayPillar.branch}`
@@ -56,11 +70,11 @@ export function BaziProvider({ children }: { children: React.ReactNode }) {
       // 计算大运
       addLog('开始计算大运...');
       const solarDate = {
-        year: date.year(),
-        month: date.month() + 1,
-        day: date.date(),
-        hour: date.hour(),
-        minute: date.minute()
+        year: calculationTime.year(),
+        month: calculationTime.month() + 1,
+        day: calculationTime.date(),
+        hour: calculationTime.hour(),
+        minute: calculationTime.minute()
       };
 
       const fate = calculateDecadeFate(

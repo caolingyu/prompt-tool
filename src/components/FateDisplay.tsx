@@ -13,7 +13,7 @@ export const FateDisplay: React.FC<FateDisplayProps> = ({
   decadeFates,
   yearFates
 }) => {
-  console.log('FateDisplay props:', { startingAge, decadeFates, yearFates });
+  // console.log('FateDisplay props:', { startingAge, decadeFates, yearFates });
 
   // 添加数据检查
   if (!decadeFates?.length) {

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Form, DatePicker, Radio, Button, Card } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Form, DatePicker, Radio, Button, Card, Cascader, Checkbox } from 'antd';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useBazi } from '../contexts/BaziContext';
@@ -8,11 +8,98 @@ interface BaziFormData {
   birthDate: Dayjs;
   birthTime: Dayjs;
   gender: 'male' | 'female';
+  birthPlace: [string, string, string?];  // [省, 市, 区]
+  useTrueSolarTime: boolean;
+}
+
+interface CityGeoData {
+  province: string;
+  city: string;
+  area: string;
+  lat: string;
+  lng: string;
+  country: string;
+}
+
+interface CascaderOption {
+  value: string;
+  label: string;
+  children?: CascaderOption[];
 }
 
 const BaziForm: React.FC = () => {
   const [form] = Form.useForm();
   const { setBirthDateTime } = useBazi();
+  const [cityData, setCityData] = useState<CityGeoData[]>([]);
+  const [options, setOptions] = useState<CascaderOption[]>([]);
+  const [useTrueSolarTime, setUseTrueSolarTime] = useState(false);
+
+  // 加载城市数据并构建级联选择器的选项
+  useEffect(() => {
+    fetch('/city_geo.json')
+      .then(response => response.json())
+      .then((data: CityGeoData[]) => {
+        setCityData(data);
+        
+        // 构建级联选择器的选项
+        const cascaderOptions: CascaderOption[] = [];
+        const provinceMap = new Map<string, CascaderOption>();
+        const cityMap = new Map<string, CascaderOption>();
+        
+        // 按省份分组
+        data.forEach(item => {
+          // 处理省份
+          if (!provinceMap.has(item.province)) {
+            const provinceOption: CascaderOption = {
+              value: item.province,
+              label: item.province,
+              children: []
+            };
+            provinceMap.set(item.province, provinceOption);
+            cascaderOptions.push(provinceOption);
+          }
+          
+          // 处理城市
+          const provinceOption = provinceMap.get(item.province)!;
+          const cityKey = `${item.province}-${item.city}`;
+          if (!cityMap.has(cityKey)) {
+            const cityOption: CascaderOption = {
+              value: item.city,
+              label: item.city,
+              children: []
+            };
+            cityMap.set(cityKey, cityOption);
+            provinceOption.children!.push(cityOption);
+          }
+          
+          // 处理区县
+          if (item.area) {
+            const cityOption = cityMap.get(cityKey)!;
+            cityOption.children = cityOption.children || [];
+            cityOption.children.push({
+              value: item.area,
+              label: item.area
+            });
+          }
+        });
+        
+        // 对所有层级进行排序
+        cascaderOptions.sort((a, b) => a.label.localeCompare(b.label));
+        cascaderOptions.forEach(province => {
+          province.children?.sort((a, b) => a.label.localeCompare(b.label));
+          province.children?.forEach(city => {
+            city.children?.sort((a, b) => a.label.localeCompare(b.label));
+          });
+        });
+        
+        setOptions(cascaderOptions);
+        // console.log('城市数据加载完成:', { 
+        //   totalCities: data.length, 
+        //   provinces: cascaderOptions.length 
+        // });
+      })
+      .catch(error => console.error('加载城市数据失败:', error));
+  }, []);
 
   const onFinish = (values: BaziFormData) => {
     const date = values.birthDate;
@@ -24,13 +111,41 @@ const BaziForm: React.FC = () => {
       .minute(time.minute())
       .second(0);
 
-    console.log('Form submitted:', {
-      date: date.format('YYYY-MM-DD'),
-      time: time.format('HH:mm'),
-      combined: birthDateTime.format('YYYY-MM-DD HH:mm:ss')
-    });
+    // 只在使用真太阳时时获取地理信息
+    let location: { lng: number; lat: number; } | undefined = undefined;
+    if (values.useTrueSolarTime && values.birthPlace) {
+      const selectedLocation = cityData.find(item => 
+        item.province === values.birthPlace[0] &&
+        item.city === values.birthPlace[1] &&
+        (values.birthPlace[2] ? item.area === values.birthPlace[2] : true)
+      );
 
-    setBirthDateTime(birthDateTime, values.gender);
+      if (selectedLocation) {
+        location = { 
+          lng: parseFloat(selectedLocation.lng), 
+          lat: parseFloat(selectedLocation.lat) 
+        };
+      } else {
+        console.error('未找到选中地点的经纬度信息');
+        return;
+      }
+    }
+
+    setBirthDateTime(
+      birthDateTime, 
+      values.gender,
+      location,
+      values.useTrueSolarTime
+    );
+  };
+
+  // 处理真太阳时选项变化
+  const handleTrueSolarTimeChange = (e: any) => {
+    setUseTrueSolarTime(e.target.checked);
+    // 如果取消选中真太阳时，清空出生地点
+    if (!e.target.checked) {
+      form.setFieldValue('birthPlace', undefined);
+    }
   };
 
   return (
@@ -52,7 +167,8 @@ const BaziForm: React.FC = () => {
         initialValues={{
           gender: 'male',
           birthDate: dayjs(),
-          birthTime: dayjs()
+          birthTime: dayjs(),
+          useTrueSolarTime: false
         }}
         style={{ padding: '16px' }}
       >
@@ -82,6 +198,36 @@ const BaziForm: React.FC = () => {
             }}
             format="HH:mm"
             placeholder="选择出生时间"
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="useTrueSolarTime"
+          valuePropName="checked"
+        >
+          <Checkbox onChange={handleTrueSolarTimeChange}>使用真太阳时</Checkbox>
+        </Form.Item>
+
+        <Form.Item
+          name="birthPlace"
+          label={<span style={{ color: 'var(--text-primary)', fontSize: '16px' }}>出生地点</span>}
+          rules={[{ 
+            required: useTrueSolarTime, 
+            message: '使用真太阳时时必须选择出生地点' 
+          }]}
+          style={{ display: useTrueSolarTime ? 'block' : 'none' }}
+        >
+          <Cascader
+            options={options}
+            placeholder="选择出生地点"
+            style={{ width: '100%' }}
+            showSearch={{
+              filter: (inputValue, path) => {
+                return path.some(option => 
+                  option.label.toLowerCase().indexOf(inputValue.toLowerCase()) > -1
+                );
+              }
+            }}
           />
         </Form.Item>
 

@@ -3,6 +3,7 @@ import type { PillarInfo } from './types';
 import { HEAVENLY_STEMS, EARTHLY_BRANCHES } from './constants';
 import { getFiveElements, getStemGod, getBranchGods, getLifeStage } from './bazi';
 import { Solar, Lunar } from 'lunar-javascript';
+import dayjs from 'dayjs';
 
 export interface SolarDate {
   year: number;
@@ -242,7 +243,7 @@ export function calculateDecadeFate(
     fates: fates
   };
   
-  console.log('calculateDecadeFate result:', result);
+  // console.log('calculateDecadeFate result:', result);
   return result;
 }
 
@@ -276,4 +277,29 @@ export function calculateYearFate(
   }
   
   return yearFates;
+}
+
+/**
+ * 计算真太阳时
+ * @param dateTime 北京时间
+ * @param longitude 经度
+ * @returns 真太阳时的dayjs对象
+ */
+export function calculateTrueSolarTime(dateTime: dayjs.Dayjs, longitude: number): dayjs.Dayjs {
+  // 计算时差
+  // 北京在东经120度，每差1度经度相差4分钟
+  const beijingLongitude = 120;
+  const timeDiffMinutes = (longitude - beijingLongitude) * 4;
+  
+  // 计算真太阳时
+  const trueSolarTime = dateTime.add(timeDiffMinutes, 'minute');
+  
+  // console.log('真太阳时计算:', {
+  //   originalTime: dateTime.format('YYYY-MM-DD HH:mm:ss'),
+  //   longitude,
+  //   timeDiffMinutes,
+  //   trueSolarTime: trueSolarTime.format('YYYY-MM-DD HH:mm:ss')
+  // });
+
+  return trueSolarTime;
 } 
