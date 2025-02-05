@@ -3,7 +3,7 @@ import { useBazi } from '../contexts/BaziContext';
 import { DecadeFate } from '../types/bazi';
 import { Card, Row, Col, Typography } from 'antd';
 import dayjs from 'dayjs';
-import { getYearStemBranch } from '../utils/baziCalculator';
+import { Solar, Lunar } from 'lunar-javascript';
 import './FateTimeline.css';
 
 const { Title } = Typography;
@@ -23,11 +23,13 @@ export const FateTimeline: React.FC = () => {
     // 生成这个大运期间的所有年份的流年数据
     const years = [];
     for (let year = startYear; year <= endYear; year++) {
-      const [stem, branch] = getYearStemBranch(dayjs(`${year}-01-01`));
+      const solar = Solar.fromYmdHms(year, 1, 1, 0, 0, 0);
+      const lunar = Lunar.fromSolar(solar);
+      const yearGanZhi = lunar.getYearInGanZhi();
       years.push({
         year: year,
-        stem: stem,
-        branch: branch,
+        stem: yearGanZhi[0],
+        branch: yearGanZhi[1],
       });
     }
     return years;

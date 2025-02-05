@@ -334,11 +334,11 @@ export function calculateYearFate(
   const yearFates: YearFate[] = [];
   
   for (let year = startYear; year <= endYear; year++) {
-    const stemIndex = (year - 4) % 10;
-    const branchIndex = (year - 4) % 12;
-    
-    const stem = HEAVENLY_STEMS[stemIndex] as HeavenlyStem;
-    const branch = EARTHLY_BRANCHES[branchIndex] as EarthlyBranch;
+    const solar = Solar.fromYmdHms(year, 1, 1, 0, 0, 0);
+    const lunar = Lunar.fromSolar(solar);
+    const yearGanZhi = lunar.getYearInGanZhi();
+    const stem = yearGanZhi[0] as HeavenlyStem;
+    const branch = yearGanZhi[1] as EarthlyBranch;
     
     yearFates.push({
       year,
