@@ -285,6 +285,12 @@ export function calculateDecadeFate(
   const monthStemIdx = HEAVENLY_STEMS.indexOf(monthStem);
   const monthBranchIdx = EARTHLY_BRANCHES.indexOf(monthBranch);
   
+  // 计算实际起运时间点
+  const startingDate = dayjs(solar.toYmd()).add(Math.round(startingAge * 365), 'days');
+  
+  // 获取起运时间点的年份
+  const startingYear = startingDate.year();
+  
   for (let i = 0; i < 8; i++) {
     let newStemIdx: number;
     let newBranchIdx: number;
@@ -306,8 +312,8 @@ export function calculateDecadeFate(
     const startAge = Math.ceil(startingAge) + i * 10;
     const endAge = startAge + 9;
     
-    // 计算年份范围
-    const startYear = date.year + Math.ceil(startingAge) + i * 10;
+    // 使用实际起运年份计算
+    const startYear = startingYear + (i * 10);
     const endYear = startYear + 9;
     
     fates.push({
@@ -323,14 +329,10 @@ export function calculateDecadeFate(
     });
   }
   
-  // 确保返回正确的数据结构
-  const result = {
+  return {
     startingAge: Math.round(startingAge * 10) / 10,
-    fates: fates
+    fates
   };
-  
-  // console.log('calculateDecadeFate result:', result);
-  return result;
 }
 
 // 添加流年计算函数
@@ -338,9 +340,49 @@ export interface YearFate extends Omit<DecadeFate, 'startAge' | 'endAge' | 'star
   year: number;
 }
 
+export function getYearFatesForDecade(decade: DecadeFate, dayStem: HeavenlyStem): YearFate[] {
+  const yearFates: YearFate[] = [];
+  
+  for (let year = decade.startYear; year <= decade.endYear; year++) {
+    // 使用立春作为分界点
+    const solar = Solar.fromYmdHms(year, 1, 1, 0, 0, 0);
+    const lunar = Lunar.fromSolar(solar);
+    
+    // 获取立春日期
+    const jieQiTable = lunar.getJieQiTable();
+    const liChun = jieQiTable['立春'] as Solar;
+    
+    // 使用立春时间创建 Solar 对象
+    const solarAtLiChun = Solar.fromYmdHms(
+      year,
+      liChun.getMonth() + 1,
+      liChun.getDay(),
+      0,
+      0,
+      0
+    );
+    
+    // 获取立春时的农历年干支
+    const lunarAtLiChun = Lunar.fromSolar(solarAtLiChun);
+    const yearGanZhi = lunarAtLiChun.getYearInGanZhi();
+    const [stem, branch] = splitGanZhi(yearGanZhi);
+    
+    yearFates.push({
+      year,
+      stem,
+      branch,
+      stemGod: getStemGod(dayStem, stem),
+      branchGods: getBranchGods(dayStem, branch),
+      elements: getFiveElements(stem, branch)
+    });
+  }
+  
+  return yearFates;
+}
+
 /**
  * 计算流年
- * 注：使用 lunar-javascript 库的 getYearInGanZhi 方法，自动处理闰月对年干支的影响
+ * 注：使用立春作为分界点计算干支
  */
 export function calculateYearFate(
   startYear: number,
@@ -350,11 +392,28 @@ export function calculateYearFate(
   const yearFates: YearFate[] = [];
   
   for (let year = startYear; year <= endYear; year++) {
+    // 使用立春作为分界点
     const solar = Solar.fromYmdHms(year, 1, 1, 0, 0, 0);
     const lunar = Lunar.fromSolar(solar);
-    const yearGanZhi = lunar.getYearInGanZhi();
-    const stem = yearGanZhi[0] as HeavenlyStem;
-    const branch = yearGanZhi[1] as EarthlyBranch;
+    
+    // 获取立春日期
+    const jieQiTable = lunar.getJieQiTable();
+    const liChun = jieQiTable['立春'] as Solar;
+    
+    // 使用立春时间创建 Solar 对象
+    const solarAtLiChun = Solar.fromYmdHms(
+      year,
+      liChun.getMonth() + 1,
+      liChun.getDay(),
+      0,
+      0,
+      0
+    );
+    
+    // 获取立春时的农历年干支
+    const lunarAtLiChun = Lunar.fromSolar(solarAtLiChun);
+    const yearGanZhi = lunarAtLiChun.getYearInGanZhi();
+    const [stem, branch] = splitGanZhi(yearGanZhi);
     
     yearFates.push({
       year,

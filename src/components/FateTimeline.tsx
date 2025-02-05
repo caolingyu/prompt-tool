@@ -2,37 +2,20 @@ import React, { useState } from 'react';
 import { useBazi } from '../contexts/BaziContext';
 import { DecadeFate } from '../types/bazi';
 import { Card, Row, Col, Typography } from 'antd';
-import { Solar, Lunar } from 'lunar-javascript';
+import { getYearFatesForDecade } from '../lib/calendar';
 import './FateTimeline.css';
 
 const { Title } = Typography;
 
 export const FateTimeline: React.FC = () => {
-  const { decadeFate, yearFates } = useBazi();
+  const { decadeFate, baziData } = useBazi();
   const [selectedDecade, setSelectedDecade] = useState<DecadeFate | null>(null);
 
-  if (!decadeFate || !yearFates) {
+  if (!decadeFate || !baziData) {
     return null;
   }
 
-  const getYearFatesForDecade = (decade: DecadeFate) => {
-    const startYear = decade.startYear;
-    const endYear = decade.endYear;
-    
-    // 生成这个大运期间的所有年份的流年数据
-    const years = [];
-    for (let year = startYear; year <= endYear; year++) {
-      const solar = Solar.fromYmdHms(year, 1, 1, 0, 0, 0);
-      const lunar = Lunar.fromSolar(solar);
-      const yearGanZhi = lunar.getYearInGanZhi();
-      years.push({
-        year: year,
-        stem: yearGanZhi[0],
-        branch: yearGanZhi[1],
-      });
-    }
-    return years;
-  };
+  const yearFates = selectedDecade ? getYearFatesForDecade(selectedDecade, baziData.dayPillar.stem) : [];
 
   return (
     <Card
@@ -109,7 +92,7 @@ export const FateTimeline: React.FC = () => {
               {selectedDecade.startYear}-{selectedDecade.endYear} 流年
             </Title>
             <Row gutter={[8, 8]} style={{ maxHeight: '200px', overflowY: 'auto' }}>
-              {getYearFatesForDecade(selectedDecade).map((yearFate, index) => (
+              {yearFates.map((yearFate, index) => (
                 <Col key={index} span={6}>
                   <div
                     className="year-fate-card"
