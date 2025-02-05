@@ -13,15 +13,6 @@ interface BaziFormData {
   useTrueSolarTime: boolean;
 }
 
-interface CityGeoData {
-  province: string;
-  city: string;
-  area: string;
-  lat: string;
-  lng: string;
-  country: string;
-}
-
 interface CascaderOption {
   value: string;
   label: string;
