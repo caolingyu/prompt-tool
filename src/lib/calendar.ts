@@ -18,7 +18,10 @@ function splitGanZhi(ganZhi: string): [HeavenlyStem, EarthlyBranch] {
   return [ganZhi[0] as HeavenlyStem, ganZhi[1] as EarthlyBranch];
 }
 
-// 计算年柱，以立春为界
+/**
+ * 计算年柱，以立春为界
+ * 注：使用 lunar-javascript 库自动处理闰月情况，不需要额外处理
+ */
 export function getYearPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInfo {
   const solar = Solar.fromYmdHms(date.year, date.month, date.day, date.hour, date.minute, 0);
   const lunar = Lunar.fromSolar(solar);
@@ -50,7 +53,13 @@ export function getYearPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInf
   };
 }
 
-// 计算月柱
+/**
+ * 计算月柱
+ * 注：使用 lunar-javascript 库自动处理闰月情况，包括：
+ * 1. 正确识别闰月
+ * 2. 在干支计算时考虑闰月的影响
+ * 3. 确保节气和月份的对应关系正确
+ */
 export function getMonthPillar(date: SolarDate, yearStem: HeavenlyStem, dayStem: HeavenlyStem): PillarInfo {
   const solar = Solar.fromYmdHms(date.year, date.month, date.day, date.hour, date.minute, 0);
   const lunar = Lunar.fromSolar(solar);
@@ -202,6 +211,10 @@ export interface DecadeFate {
   endYear: number;
 }
 
+/**
+ * 计算大运
+ * 注：大运计算基于节气和月柱，lunar-javascript 库会自动处理闰月对节气和月柱的影响
+ */
 export function calculateDecadeFate(
   date: SolarDate,
   gender: 'male' | 'female',
@@ -326,6 +339,10 @@ export interface YearFate extends Omit<DecadeFate, 'startAge' | 'endAge' | 'star
   year: number;
 }
 
+/**
+ * 计算流年
+ * 注：使用 lunar-javascript 库的 getYearInGanZhi 方法，自动处理闰月对年干支的影响
+ */
 export function calculateYearFate(
   startYear: number,
   endYear: number,
@@ -378,7 +395,10 @@ export function calculateTrueSolarTime(dateTime: dayjs.Dayjs, longitude: number)
   return trueSolarTime;
 }
 
-// 获取农历日期信息
+/**
+ * 获取农历日期信息
+ * 注：lunar-javascript 库会自动处理闰月情况，返回的月份信息会正确标识是否为闰月
+ */
 export function getLunarDate(date: SolarDate): {
   year: number;
   month: number;
