@@ -13,56 +13,70 @@ export interface SolarDate {
   minute: number;
 }
 
+// 从干支字符串中分离天干地支
+function splitGanZhi(ganZhi: string): [HeavenlyStem, EarthlyBranch] {
+  return [ganZhi[0] as HeavenlyStem, ganZhi[1] as EarthlyBranch];
+}
+
 // 计算年柱，以立春为界
 export function getYearPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInfo {
   const solar = Solar.fromYmdHms(date.year, date.month, date.day, date.hour, date.minute, 0);
   const lunar = Lunar.fromSolar(solar);
   
-  // 获取节气信息
-  const jieqi = lunar.getJieQi();
-  let year = date.year;
+  // 获取年干支
+  const yearGanZhi = lunar.getYearInGanZhi();
+  const [stem, branch] = splitGanZhi(yearGanZhi);
   
-  // 如果在立春前，年柱还要算前一年
-  if (jieqi.startsWith("立春") && lunar.getMonth() === 1) {
-    year -= 1;
-  }
+  const stemGod = getStemGod(dayStem, stem);
+  const branchGods = getBranchGods(dayStem, branch);
   
-  const stemIndex = (year - 4) % 10;
-  const branchIndex = (year - 4) % 12;
-  
-  const stem = HEAVENLY_STEMS[stemIndex] as HeavenlyStem;
-  const branch = EARTHLY_BRANCHES[branchIndex] as EarthlyBranch;
+  console.log('八字年柱计算:', {
+    年干支: yearGanZhi,
+    年干: stem,
+    年支: branch,
+    日干: dayStem,
+    十神: stemGod,
+    藏干: branchGods,
+    五行: getFiveElements(stem, branch)
+  });
   
   return {
     stem,
-    stemGod: getStemGod(dayStem, stem),
+    stemGod,
     branch,
-    branchGods: getBranchGods(dayStem, branch),
+    branchGods,
     elements: getFiveElements(stem, branch),
     lifeStage: getLifeStage(dayStem, branch)
   };
 }
 
-// 计算月柱，需要考虑节气
+// 计算月柱
 export function getMonthPillar(date: SolarDate, yearStem: HeavenlyStem, dayStem: HeavenlyStem): PillarInfo {
   const solar = Solar.fromYmdHms(date.year, date.month, date.day, date.hour, date.minute, 0);
   const lunar = Lunar.fromSolar(solar);
   
-  // 使用月份的干支信息
+  // 获取月干支
   const monthGanZhi = lunar.getMonthInGanZhi();
-  const branch = monthGanZhi[1] as EarthlyBranch;
-  const branchIndex = EARTHLY_BRANCHES.indexOf(branch);
+  const [stem, branch] = splitGanZhi(monthGanZhi);
   
-  // 月干公式：年干 * 2 + 月支索引，超过10从头开始
-  const baseStemIndex = HEAVENLY_STEMS.indexOf(yearStem) * 2 % 10;
-  const stemIndex = (baseStemIndex + branchIndex) % 10;
-  const stem = HEAVENLY_STEMS[stemIndex] as HeavenlyStem;
+  const stemGod = getStemGod(dayStem, stem);
+  const branchGods = getBranchGods(dayStem, branch);
+  
+  console.log('八字月柱计算:', {
+    月干支: monthGanZhi,
+    月干: stem,
+    月支: branch,
+    日干: dayStem,
+    十神: stemGod,
+    藏干: branchGods,
+    五行: getFiveElements(stem, branch)
+  });
   
   return {
     stem,
-    stemGod: getStemGod(dayStem, stem),
+    stemGod,
     branch,
-    branchGods: getBranchGods(dayStem, branch),
+    branchGods,
     elements: getFiveElements(stem, branch),
     lifeStage: getLifeStage(dayStem, branch)
   };
@@ -72,16 +86,26 @@ export function getMonthPillar(date: SolarDate, yearStem: HeavenlyStem, dayStem:
 export function getDayPillar(date: SolarDate): PillarInfo {
   const solar = Solar.fromYmdHms(date.year, date.month, date.day, date.hour, date.minute, 0);
   const lunar = Lunar.fromSolar(solar);
-  const dayGanZhi = lunar.getDayInGanZhi();
   
-  const stem = dayGanZhi[0] as HeavenlyStem;
-  const branch = dayGanZhi[1] as EarthlyBranch;
+  // 获取日干支
+  const dayGanZhi = lunar.getDayInGanZhi();
+  const [stem, branch] = splitGanZhi(dayGanZhi);
+  
+  const branchGods = getBranchGods(stem, branch);
+  
+  console.log('八字日柱计算:', {
+    日干支: dayGanZhi,
+    日干: stem,
+    日支: branch,
+    藏干: branchGods,
+    五行: getFiveElements(stem, branch)
+  });
   
   return {
     stem,
-    stemGod: null, // 日主本身没有十神
+    stemGod: undefined, // 日主本身没有十神
     branch,
-    branchGods: getBranchGods(stem, branch),
+    branchGods,
     elements: getFiveElements(stem, branch),
     lifeStage: getLifeStage(stem, branch)
   };
@@ -89,27 +113,77 @@ export function getDayPillar(date: SolarDate): PillarInfo {
 
 // 计算时柱
 export function getHourPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInfo {
-  // 时干根据日干推算
-  const dayStemIndex = HEAVENLY_STEMS.indexOf(dayStem);
-  const baseStemIndex = (dayStemIndex * 2) % 10;
-  
-  // 子时（23:00-1:00）开始
+  // 将小时转换为时辰（二小时为一个时辰，从23:00-1:00开始为子时）
   let hour = date.hour;
+  
+  // 处理子时跨日的情况
   if (hour === 23) {
-    hour = 0;
+    hour = 0;  // 23:00-23:59 算作子时（第二天的开始）
+  } else if (hour === 0) {
+    hour = 0;  // 0:00-0:59 也算作子时
   }
   
+  // 计算时辰地支
+  // 子时是0点开始，所以要先加1，然后除以2
   const branchIndex = Math.floor((hour + 1) / 2) % 12;
-  const stemIndex = (baseStemIndex + branchIndex) % 10;
-  
-  const stem = HEAVENLY_STEMS[stemIndex] as HeavenlyStem;
   const branch = EARTHLY_BRANCHES[branchIndex] as EarthlyBranch;
+  
+  // 计算时干
+  // 甲己日起甲时，乙庚日起丙时，丙辛日起戊时，丁壬日起庚时，戊癸日起壬时
+  const dayStemIndex = HEAVENLY_STEMS.indexOf(dayStem);
+  
+  // 根据日干确定起始天干
+  let startStem: number;
+  switch (dayStem) {
+    case '甲':
+    case '己':
+      startStem = 0;  // 甲
+      break;
+    case '乙':
+    case '庚':
+      startStem = 2;  // 丙
+      break;
+    case '丙':
+    case '辛':
+      startStem = 4;  // 戊
+      break;
+    case '丁':
+    case '壬':
+      startStem = 6;  // 庚
+      break;
+    case '戊':
+    case '癸':
+      startStem = 8;  // 壬
+      break;
+    default:
+      startStem = 0;
+  }
+  
+  const stemIndex = (startStem + Math.floor((hour + 1) / 2)) % 10;
+  const stem = HEAVENLY_STEMS[stemIndex] as HeavenlyStem;
+  
+  const stemGod = getStemGod(dayStem, stem);
+  const branchGods = getBranchGods(dayStem, branch);
+  
+  console.log('八字时柱计算:', {
+    时干: stem,
+    时支: branch,
+    原始小时: date.hour,
+    调整后小时: hour,
+    日干: dayStem,
+    起始天干: HEAVENLY_STEMS[startStem],
+    时干序: stemIndex,
+    时支序: branchIndex,
+    十神: stemGod,
+    藏干: branchGods,
+    五行: getFiveElements(stem, branch)
+  });
   
   return {
     stem,
-    stemGod: getStemGod(dayStem, stem),
+    stemGod,
     branch,
-    branchGods: getBranchGods(dayStem, branch),
+    branchGods,
     elements: getFiveElements(stem, branch),
     lifeStage: getLifeStage(dayStem, branch)
   };
@@ -302,4 +376,26 @@ export function calculateTrueSolarTime(dateTime: dayjs.Dayjs, longitude: number)
   // });
 
   return trueSolarTime;
+}
+
+// 获取农历日期信息
+export function getLunarDate(date: SolarDate): {
+  year: number;
+  month: number;
+  day: number;
+  yearInGanZhi: string;
+  monthInGanZhi: string;
+  dayInGanZhi: string;
+} {
+  const solar = Solar.fromYmdHms(date.year, date.month, date.day, date.hour, date.minute, 0);
+  const lunar = Lunar.fromSolar(solar);
+  
+  return {
+    year: lunar.getYear(),
+    month: lunar.getMonth(),
+    day: lunar.getDay(),
+    yearInGanZhi: lunar.getYearInGanZhi(),
+    monthInGanZhi: lunar.getMonthInGanZhi(),
+    dayInGanZhi: lunar.getDayInGanZhi()
+  };
 } 

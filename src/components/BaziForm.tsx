@@ -27,65 +27,43 @@ const BaziForm: React.FC = () => {
 
   // 构建级联选择器的选项
   useEffect(() => {
-    // 构建级联选择器的选项
-    const cascaderOptions: CascaderOption[] = [];
-    const provinceMap = new Map<string, CascaderOption>();
-    const cityMap = new Map<string, CascaderOption>();
-    
-    // 按省份分组
-    cityGeoData.forEach(item => {
-      // 处理省份
-      if (!provinceMap.has(item.province)) {
-        const provinceOption: CascaderOption = {
-          value: item.province,
-          label: item.province,
-          children: []
-        };
-        provinceMap.set(item.province, provinceOption);
-        cascaderOptions.push(provinceOption);
-      }
-      
-      // 处理城市
-      const provinceOption = provinceMap.get(item.province)!;
-      const cityKey = `${item.province}-${item.city}`;
-      if (!cityMap.has(cityKey)) {
-        const cityOption: CascaderOption = {
-          value: item.city,
-          label: item.city,
-          children: []
-        };
-        cityMap.set(cityKey, cityOption);
-        provinceOption.children!.push(cityOption);
-      }
-      
-      // 处理区县
-      if (item.area) {
-        const cityOption = cityMap.get(cityKey)!;
-        cityOption.children = cityOption.children || [];
-        cityOption.children.push({
-          value: item.area,
-          label: item.area
-        });
-      }
+    const provinces = Array.from(new Set(cityGeoData.map(item => item.province)));
+    const cascaderOptions = provinces.map(province => {
+      const cities = Array.from(
+        new Set(
+          cityGeoData
+            .filter(item => item.province === province)
+            .map(item => item.city)
+        )
+      );
+
+      return {
+        value: province,
+        label: province,
+        children: cities.map(city => {
+          const areas = cityGeoData
+            .filter(
+              item => item.province === province && item.city === city
+            )
+            .map(item => ({
+              value: item.area,
+              label: item.area
+            }));
+
+          return {
+            value: city,
+            label: city,
+            children: areas
+          };
+        })
+      };
     });
-    
-    // 对所有层级进行排序
-    cascaderOptions.sort((a, b) => a.label.localeCompare(b.label));
-    cascaderOptions.forEach(province => {
-      province.children?.sort((a, b) => a.label.localeCompare(b.label));
-      province.children?.forEach(city => {
-        city.children?.sort((a, b) => a.label.localeCompare(b.label));
-      });
-    });
-    
+
     setOptions(cascaderOptions);
-    // console.log('城市数据加载完成:', { 
-    //   totalCities: data.length, 
-    //   provinces: cascaderOptions.length 
-    // });
   }, []);
 
   const onFinish = (values: BaziFormData) => {
+    console.log('Form submitted with values:', values);
     const date = values.birthDate;
     const time = values.birthTime;
     
@@ -94,6 +72,8 @@ const BaziForm: React.FC = () => {
       .hour(time.hour())
       .minute(time.minute())
       .second(0);
+
+    console.log('Combined birth date time:', birthDateTime.format('YYYY-MM-DD HH:mm:ss'));
 
     // 只在使用真太阳时时获取地理信息
     let location: { lng: number; lat: number; } | undefined = undefined;
@@ -109,6 +89,7 @@ const BaziForm: React.FC = () => {
           lng: parseFloat(selectedLocation.lng), 
           lat: parseFloat(selectedLocation.lat) 
         };
+        console.log('Selected location:', location);
       } else {
         console.error('未找到选中地点的经纬度信息');
         return;

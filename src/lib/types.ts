@@ -51,7 +51,7 @@ export interface BaziAnalysis {
 
 export interface PillarInfo {
   stem: string;
-  stemGod: string | null;
+  stemGod?: string;
   branch: string;
   branchGods: [string, string][];
   elements: [string, string];

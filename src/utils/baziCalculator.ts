@@ -2,28 +2,7 @@ import { HEAVENLY_STEMS, EARTHLY_BRANCHES, FIVE_ELEMENTS, FIVE_ELEMENTS_RELATION
 import type { BaziPillar } from '../types/bazi';
 import dayjs from 'dayjs';
 import { Solar, Lunar } from 'lunar-javascript';
-
-export function getFiveElements(stem: string, branch?: string): [string, string] {
-  const stemElement = FIVE_ELEMENTS.stems[stem] || '';
-  const branchElement = branch ? FIVE_ELEMENTS.branches[branch] || '' : '';
-  
-  return [stemElement, branchElement];
-}
-
-export function getStemGod(dayStem: string, targetStem: string): string {
-  const dayElement = getFiveElements(dayStem)[0];
-  const targetElement = getFiveElements(targetStem)[0];
-  
-  if (!dayElement || !targetElement) return '';
-  
-  const baseGod = FIVE_ELEMENTS_RELATIONS[dayElement][targetElement];
-  const isTargetYang = HEAVENLY_STEMS.indexOf(targetStem) % 2 === 0;
-  
-  if (baseGod in YIN_YANG_GODS) {
-    return YIN_YANG_GODS[baseGod][isTargetYang ? "阳" : "阴"];
-  }
-  return baseGod;
-}
+import { getFiveElements, getStemGod, getBranchGods } from '../lib/bazi';
 
 export function getYearStemBranch(date: dayjs.Dayjs): [string, string] {
   // 使用lunar-javascript计算节气
@@ -102,42 +81,32 @@ export function calculateBaziChart(birthDate: dayjs.Dayjs): {
   const [dayStem, dayBranch] = getDayStemBranch(birthDate);
   const [hourStem, hourBranch] = getHourStemBranch(dayStem, birthDate.hour());
   
-  // 计算藏干和十神关系
-  const yearBranchGods = getBranchHiddenStems(yearBranch)
-    .map(stem => [stem, getStemGod(dayStem, stem)] as [string, string]);
-  const monthBranchGods = getBranchHiddenStems(monthBranch)
-    .map(stem => [stem, getStemGod(dayStem, stem)] as [string, string]);
-  const dayBranchGods = getBranchHiddenStems(dayBranch)
-    .map(stem => [stem, getStemGod(dayStem, stem)] as [string, string]);
-  const hourBranchGods = getBranchHiddenStems(hourBranch)
-    .map(stem => [stem, getStemGod(dayStem, stem)] as [string, string]);
-  
   return {
     yearPillar: {
       stem: yearStem,
       stemGod: getStemGod(dayStem, yearStem),
       branch: yearBranch,
-      branchGods: yearBranchGods,
+      branchGods: getBranchGods(dayStem, yearBranch),
       elements: getFiveElements(yearStem, yearBranch)
     },
     monthPillar: {
       stem: monthStem,
       stemGod: getStemGod(dayStem, monthStem),
       branch: monthBranch,
-      branchGods: monthBranchGods,
+      branchGods: getBranchGods(dayStem, monthBranch),
       elements: getFiveElements(monthStem, monthBranch)
     },
     dayPillar: {
       stem: dayStem,
       branch: dayBranch,
-      branchGods: dayBranchGods,
+      branchGods: getBranchGods(dayStem, dayBranch),
       elements: getFiveElements(dayStem, dayBranch)
     },
     hourPillar: {
       stem: hourStem,
       stemGod: getStemGod(dayStem, hourStem),
       branch: hourBranch,
-      branchGods: hourBranchGods,
+      branchGods: getBranchGods(dayStem, hourBranch),
       elements: getFiveElements(hourStem, hourBranch)
     }
   };

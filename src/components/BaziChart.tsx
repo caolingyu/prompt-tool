@@ -85,6 +85,33 @@ const BaziChart: React.FC = () => {
 
   if (!baziData) return null;
 
+  console.log('八字图表数据:', {
+    年柱: {
+      天干: baziData.yearPillar.stem,
+      地支: baziData.yearPillar.branch,
+      十神: baziData.yearPillar.stemGod,
+      藏干: baziData.yearPillar.branchGods
+    },
+    月柱: {
+      天干: baziData.monthPillar.stem,
+      地支: baziData.monthPillar.branch,
+      十神: baziData.monthPillar.stemGod,
+      藏干: baziData.monthPillar.branchGods
+    },
+    日柱: {
+      天干: baziData.dayPillar.stem,
+      地支: baziData.dayPillar.branch,
+      十神: baziData.dayPillar.stemGod,
+      藏干: baziData.dayPillar.branchGods
+    },
+    时柱: {
+      天干: baziData.hourPillar.stem,
+      地支: baziData.hourPillar.branch,
+      十神: baziData.hourPillar.stemGod,
+      藏干: baziData.hourPillar.branchGods
+    }
+  });
+
   const pillars = [
     { title: '年柱', data: baziData.yearPillar },
     { title: '月柱', data: baziData.monthPillar },
@@ -122,31 +149,40 @@ const BaziChart: React.FC = () => {
 
       <ChartContainer>
         <PillarsContainer>
-          {pillars.map(({ title, data }, index) => (
-            <PillarColumn key={title}>
-              <PillarHeader>{title}</PillarHeader>
-              <PillarSection>
-                <GodElement>
-                  {index === 2 ? '日主' : data.stemGod}
-                </GodElement>
-                <PillarElement color={STEM_COLORS[data.stem]}>
-                  {data.stem}
-                </PillarElement>
-              </PillarSection>
-              <PillarSection>
-                <PillarElement color={BRANCH_COLORS[data.branch]}>
-                  {data.branch}
-                </PillarElement>
-                <HiddenStems>
-                  {data.branchGods.map(([stem, god], index) => (
-                    <div key={index} style={{ color: STEM_COLORS[stem] }}>
-                      {stem}·{god}
-                    </div>
-                  ))}
-                </HiddenStems>
-              </PillarSection>
-            </PillarColumn>
-          ))}
+          {pillars.map(({ title, data }, index) => {
+            console.log(`${title}数据:`, {
+              天干: data.stem,
+              地支: data.branch,
+              十神: data.stemGod,
+              藏干: data.branchGods,
+              是否日柱: index === 2
+            });
+            return (
+              <PillarColumn key={title}>
+                <PillarHeader>{title}</PillarHeader>
+                <PillarSection>
+                  <GodElement>
+                    {index === 2 ? '日主' : (data.stemGod || '')}
+                  </GodElement>
+                  <PillarElement color={STEM_COLORS[data.stem]}>
+                    {data.stem}
+                  </PillarElement>
+                </PillarSection>
+                <PillarSection>
+                  <PillarElement color={BRANCH_COLORS[data.branch]}>
+                    {data.branch}
+                  </PillarElement>
+                  <HiddenStems>
+                    {data.branchGods.map(([stem, god], index) => (
+                      <div key={index} style={{ color: STEM_COLORS[stem] }}>
+                        {stem}·{god}
+                      </div>
+                    ))}
+                  </HiddenStems>
+                </PillarSection>
+              </PillarColumn>
+            );
+          })}
         </PillarsContainer>
         
         <DateInfo>
