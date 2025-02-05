@@ -3,6 +3,7 @@ import { Form, DatePicker, Radio, Button, Card, Cascader, Checkbox } from 'antd'
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useBazi } from '../contexts/BaziContext';
+import cityGeoData from '../../city_geo.json';
 
 interface BaziFormData {
   birthDate: Dayjs;
@@ -30,75 +31,67 @@ interface CascaderOption {
 const BaziForm: React.FC = () => {
   const [form] = Form.useForm();
   const { setBirthDateTime } = useBazi();
-  const [cityData, setCityData] = useState<CityGeoData[]>([]);
   const [options, setOptions] = useState<CascaderOption[]>([]);
   const [useTrueSolarTime, setUseTrueSolarTime] = useState(false);
 
-  // 加载城市数据并构建级联选择器的选项
+  // 构建级联选择器的选项
   useEffect(() => {
-    fetch('/city_geo.json')
-      .then(response => response.json())
-      .then((data: CityGeoData[]) => {
-        setCityData(data);
-        
-        // 构建级联选择器的选项
-        const cascaderOptions: CascaderOption[] = [];
-        const provinceMap = new Map<string, CascaderOption>();
-        const cityMap = new Map<string, CascaderOption>();
-        
-        // 按省份分组
-        data.forEach(item => {
-          // 处理省份
-          if (!provinceMap.has(item.province)) {
-            const provinceOption: CascaderOption = {
-              value: item.province,
-              label: item.province,
-              children: []
-            };
-            provinceMap.set(item.province, provinceOption);
-            cascaderOptions.push(provinceOption);
-          }
-          
-          // 处理城市
-          const provinceOption = provinceMap.get(item.province)!;
-          const cityKey = `${item.province}-${item.city}`;
-          if (!cityMap.has(cityKey)) {
-            const cityOption: CascaderOption = {
-              value: item.city,
-              label: item.city,
-              children: []
-            };
-            cityMap.set(cityKey, cityOption);
-            provinceOption.children!.push(cityOption);
-          }
-          
-          // 处理区县
-          if (item.area) {
-            const cityOption = cityMap.get(cityKey)!;
-            cityOption.children = cityOption.children || [];
-            cityOption.children.push({
-              value: item.area,
-              label: item.area
-            });
-          }
+    // 构建级联选择器的选项
+    const cascaderOptions: CascaderOption[] = [];
+    const provinceMap = new Map<string, CascaderOption>();
+    const cityMap = new Map<string, CascaderOption>();
+    
+    // 按省份分组
+    cityGeoData.forEach(item => {
+      // 处理省份
+      if (!provinceMap.has(item.province)) {
+        const provinceOption: CascaderOption = {
+          value: item.province,
+          label: item.province,
+          children: []
+        };
+        provinceMap.set(item.province, provinceOption);
+        cascaderOptions.push(provinceOption);
+      }
+      
+      // 处理城市
+      const provinceOption = provinceMap.get(item.province)!;
+      const cityKey = `${item.province}-${item.city}`;
+      if (!cityMap.has(cityKey)) {
+        const cityOption: CascaderOption = {
+          value: item.city,
+          label: item.city,
+          children: []
+        };
+        cityMap.set(cityKey, cityOption);
+        provinceOption.children!.push(cityOption);
+      }
+      
+      // 处理区县
+      if (item.area) {
+        const cityOption = cityMap.get(cityKey)!;
+        cityOption.children = cityOption.children || [];
+        cityOption.children.push({
+          value: item.area,
+          label: item.area
         });
-        
-        // 对所有层级进行排序
-        cascaderOptions.sort((a, b) => a.label.localeCompare(b.label));
-        cascaderOptions.forEach(province => {
-          province.children?.sort((a, b) => a.label.localeCompare(b.label));
-          province.children?.forEach(city => {
-            city.children?.sort((a, b) => a.label.localeCompare(b.label));
-          });
-        });
-        
-        setOptions(cascaderOptions);
-        // console.log('城市数据加载完成:', { 
-        //   totalCities: data.length, 
-        //   provinces: cascaderOptions.length 
-        // });
-      })
-      .catch(error => console.error('加载城市数据失败:', error));
+      }
+    });
+    
+    // 对所有层级进行排序
+    cascaderOptions.sort((a, b) => a.label.localeCompare(b.label));
+    cascaderOptions.forEach(province => {
+      province.children?.sort((a, b) => a.label.localeCompare(b.label));
+      province.children?.forEach(city => {
+        city.children?.sort((a, b) => a.label.localeCompare(b.label));
+      });
+    });
+    
+    setOptions(cascaderOptions);
+    // console.log('城市数据加载完成:', { 
+    //   totalCities: data.length, 
+    //   provinces: cascaderOptions.length 
+    // });
   }, []);
 
   const onFinish = (values: BaziFormData) => {
@@ -114,7 +107,7 @@ const BaziForm: React.FC = () => {
     // 只在使用真太阳时时获取地理信息
     let location: { lng: number; lat: number; } | undefined = undefined;
     if (values.useTrueSolarTime && values.birthPlace) {
-      const selectedLocation = cityData.find(item => 
+      const selectedLocation = cityGeoData.find(item => 
         item.province === values.birthPlace[0] &&
         item.city === values.birthPlace[1] &&
         (values.birthPlace[2] ? item.area === values.birthPlace[2] : true)
