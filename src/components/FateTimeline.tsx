@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useBazi } from '../contexts/BaziContext';
 import { DecadeFate } from '../types/bazi';
 import { Card, Row, Col, Typography } from 'antd';
-import dayjs from 'dayjs';
 import { Solar, Lunar } from 'lunar-javascript';
 import './FateTimeline.css';
 

@@ -60,7 +60,7 @@ export function getYearPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInf
  * 2. 在干支计算时考虑闰月的影响
  * 3. 确保节气和月份的对应关系正确
  */
-export function getMonthPillar(date: SolarDate, yearStem: HeavenlyStem, dayStem: HeavenlyStem): PillarInfo {
+export function getMonthPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInfo {
   const solar = Solar.fromYmdHms(date.year, date.month, date.day, date.hour, date.minute, 0);
   const lunar = Lunar.fromSolar(solar);
   
@@ -139,7 +139,6 @@ export function getHourPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInf
   
   // 计算时干
   // 甲己日起甲时，乙庚日起丙时，丙辛日起戊时，丁壬日起庚时，戊癸日起壬时
-  const dayStemIndex = HEAVENLY_STEMS.indexOf(dayStem);
   
   // 根据日干确定起始天干
   let startStem: number;

@@ -71,7 +71,7 @@ export function BaziProvider({ children }: { children: React.ReactNode }) {
       addLog('计算年柱...');
       const yearPillar = getYearPillar(solarDate, dayPillar.stem);
       addLog('计算月柱...');
-      const monthPillar = getMonthPillar(solarDate, yearPillar.stem, dayPillar.stem);
+      const monthPillar = getMonthPillar(solarDate, dayPillar.stem);
       addLog('计算时柱...');
       const hourPillar = getHourPillar(solarDate, dayPillar.stem);
       
