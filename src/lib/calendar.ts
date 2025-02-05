@@ -33,15 +33,15 @@ export function getYearPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInf
   const stemGod = getStemGod(dayStem, stem);
   const branchGods = getBranchGods(dayStem, branch);
   
-  console.log('八字年柱计算:', {
-    年干支: yearGanZhi,
-    年干: stem,
-    年支: branch,
-    日干: dayStem,
-    十神: stemGod,
-    藏干: branchGods,
-    五行: getFiveElements(stem, branch)
-  });
+  // console.log('八字年柱计算:', {
+  //   年干支: yearGanZhi,
+  //   年干: stem,
+  //   年支: branch,
+  //   日干: dayStem,
+  //   十神: stemGod,
+  //   藏干: branchGods,
+  //   五行: getFiveElements(stem, branch)
+  // });
   
   return {
     stem,
@@ -71,15 +71,15 @@ export function getMonthPillar(date: SolarDate, yearStem: HeavenlyStem, dayStem:
   const stemGod = getStemGod(dayStem, stem);
   const branchGods = getBranchGods(dayStem, branch);
   
-  console.log('八字月柱计算:', {
-    月干支: monthGanZhi,
-    月干: stem,
-    月支: branch,
-    日干: dayStem,
-    十神: stemGod,
-    藏干: branchGods,
-    五行: getFiveElements(stem, branch)
-  });
+  // console.log('八字月柱计算:', {
+  //   月干支: monthGanZhi,
+  //   月干: stem,
+  //   月支: branch,
+  //   日干: dayStem,
+  //   十神: stemGod,
+  //   藏干: branchGods,
+  //   五行: getFiveElements(stem, branch)
+  // });
   
   return {
     stem,
@@ -102,13 +102,13 @@ export function getDayPillar(date: SolarDate): PillarInfo {
   
   const branchGods = getBranchGods(stem, branch);
   
-  console.log('八字日柱计算:', {
-    日干支: dayGanZhi,
-    日干: stem,
-    日支: branch,
-    藏干: branchGods,
-    五行: getFiveElements(stem, branch)
-  });
+  // console.log('八字日柱计算:', {
+  //   日干支: dayGanZhi,
+  //   日干: stem,
+  //   日支: branch,
+  //   藏干: branchGods,
+  //   五行: getFiveElements(stem, branch)
+  // });
   
   return {
     stem,
@@ -174,19 +174,19 @@ export function getHourPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInf
   const stemGod = getStemGod(dayStem, stem);
   const branchGods = getBranchGods(dayStem, branch);
   
-  console.log('八字时柱计算:', {
-    时干: stem,
-    时支: branch,
-    原始小时: date.hour,
-    调整后小时: hour,
-    日干: dayStem,
-    起始天干: HEAVENLY_STEMS[startStem],
-    时干序: stemIndex,
-    时支序: branchIndex,
-    十神: stemGod,
-    藏干: branchGods,
-    五行: getFiveElements(stem, branch)
-  });
+  // console.log('八字时柱计算:', {
+  //   时干: stem,
+  //   时支: branch,
+  //   原始小时: date.hour,
+  //   调整后小时: hour,
+  //   日干: dayStem,
+  //   起始天干: HEAVENLY_STEMS[startStem],
+  //   时干序: stemIndex,
+  //   时支序: branchIndex,
+  //   十神: stemGod,
+  //   藏干: branchGods,
+  //   五行: getFiveElements(stem, branch)
+  // });
   
   return {
     stem,

@@ -83,13 +83,13 @@ export function BaziProvider({ children }: { children: React.ReactNode }) {
       const monthStemGod = getStemGod(dayPillar.stem, monthPillar.stem);
       const hourStemGod = getStemGod(dayPillar.stem, hourPillar.stem);
       
-      console.log('十神计算结果:', {
-        年柱十神: yearStemGod,
-        月柱十神: monthStemGod,
-        日柱十神: undefined, // 日主本身没有十神
-        时柱十神: hourStemGod,
-        日干: dayPillar.stem
-      });
+      // console.log('十神计算结果:', {
+      //   年柱十神: yearStemGod,
+      //   月柱十神: monthStemGod,
+      //   日柱十神: undefined, // 日主本身没有十神
+      //   时柱十神: hourStemGod,
+      //   日干: dayPillar.stem
+      // });
       
       // 设置八字数据
       const baziData = {
@@ -113,7 +113,7 @@ export function BaziProvider({ children }: { children: React.ReactNode }) {
         lunarDate: lunarInfo
       };
       
-      console.log('设置八字数据:', baziData);
+      // console.log('设置八字数据:', baziData);
       setBaziData(baziData);
 
       // 计算大运

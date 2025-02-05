@@ -63,7 +63,7 @@ const BaziForm: React.FC = () => {
   }, []);
 
   const onFinish = (values: BaziFormData) => {
-    console.log('Form submitted with values:', values);
+    // console.log('Form submitted with values:', values);
     const date = values.birthDate;
     const time = values.birthTime;
     
@@ -73,7 +73,7 @@ const BaziForm: React.FC = () => {
       .minute(time.minute())
       .second(0);
 
-    console.log('Combined birth date time:', birthDateTime.format('YYYY-MM-DD HH:mm:ss'));
+    // console.log('Combined birth date time:', birthDateTime.format('YYYY-MM-DD HH:mm:ss'));
 
     // 只在使用真太阳时时获取地理信息
     let location: { lng: number; lat: number; } | undefined = undefined;
@@ -89,7 +89,7 @@ const BaziForm: React.FC = () => {
           lng: parseFloat(selectedLocation.lng), 
           lat: parseFloat(selectedLocation.lat) 
         };
-        console.log('Selected location:', location);
+        // console.log('Selected location:', location);
       } else {
         console.error('未找到选中地点的经纬度信息');
         return;
