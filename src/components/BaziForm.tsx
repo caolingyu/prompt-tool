@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Form, DatePicker, Radio, Button, Card, Cascader, Checkbox } from 'antd';
+import { Form, DatePicker as AntDatePicker, Radio, Button, Card, Cascader, Checkbox } from 'antd';
+import { Picker } from 'antd-mobile';
 import type { Dayjs } from 'dayjs';
 import dayjs from 'dayjs';
 import { useBazi } from '../contexts/BaziContext';
 import cityGeoData from '../../city_geo.json';
+import 'antd-mobile/es/global';
 
 interface BaziFormData {
   birthDate: Dayjs;
@@ -24,6 +26,7 @@ const BaziForm: React.FC = () => {
   const { setBirthDateTime } = useBazi();
   const [options, setOptions] = useState<CascaderOption[]>([]);
   const [useTrueSolarTime, setUseTrueSolarTime] = useState(false);
+  const [timeValue, setTimeValue] = useState<string>('');
 
   // 构建级联选择器的选项
   useEffect(() => {
@@ -142,7 +145,7 @@ const BaziForm: React.FC = () => {
           label={<span style={{ color: 'var(--text-primary)', fontSize: '16px' }}>出生日期</span>}
           rules={[{ required: true, message: '请选择出生日期' }]}
         >
-          <DatePicker 
+          <AntDatePicker 
             style={{ 
               width: '100%',
               height: '40px'
@@ -156,14 +159,49 @@ const BaziForm: React.FC = () => {
           label={<span style={{ color: 'var(--text-primary)', fontSize: '16px' }}>出生时间</span>}
           rules={[{ required: true, message: '请选择出生时辰' }]}
         >
-          <DatePicker.TimePicker
-            style={{ 
-              width: '100%',
-              height: '40px'
+          <div 
+            onClick={() => {
+              const currentTime = form.getFieldValue('birthTime') || dayjs();
+              const hours = currentTime.hour();
+              const minutes = currentTime.minute();
+              
+              Picker.prompt({
+                columns: [
+                  Array.from({ length: 24 }, (_, i) => ({
+                    label: i.toString().padStart(2, '0') + '时',
+                    value: i
+                  })),
+                  Array.from({ length: 60 }, (_, i) => ({
+                    label: i.toString().padStart(2, '0') + '分',
+                    value: i
+                  }))
+                ],
+                defaultValue: [hours, minutes],
+                onConfirm: (selected: any) => {
+                  const [hour, minute] = selected;
+                  const currentDate = form.getFieldValue('birthTime') || dayjs();
+                  const newTime = currentDate.hour(hour).minute(minute);
+                  form.setFieldValue('birthTime', newTime);
+                  setTimeValue(newTime.format('HH:mm'));
+                }
+              });
             }}
-            format="HH:mm"
-            placeholder="选择出生时间"
-          />
+            style={{
+              height: '40px',
+              border: '1px solid #d9d9d9',
+              borderRadius: '6px',
+              padding: '4px 11px',
+              display: 'flex',
+              alignItems: 'center',
+              cursor: 'pointer',
+              background: '#fff'
+            }}
+          >
+            {timeValue || (form.getFieldValue('birthTime') ? 
+              dayjs(form.getFieldValue('birthTime')).format('HH:mm') : 
+              '选择出生时间'
+            )}
+          </div>
         </Form.Item>
 
         <Form.Item
