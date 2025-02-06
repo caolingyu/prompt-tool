@@ -64,41 +64,32 @@ export function getStemGod(dayStem: HeavenlyStem, targetStem: HeavenlyStem): str
   const [dayElement] = getFiveElements(dayStem, "");
   const [targetElement] = getFiveElements(targetStem, "");
   
-  // console.log('计算十神:', {
-  //   日干: dayStem,
-  //   目标干: targetStem,
-  //   日干五行: dayElement,
-  //   目标五行: targetElement,
-  //   日干索引: HEAVENLY_STEMS.indexOf(dayStem),
-  //   目标干索引: HEAVENLY_STEMS.indexOf(targetStem),
-  //   日干阴阳: HEAVENLY_STEMS.indexOf(dayStem) % 2 === 0 ? "阳" : "阴",
-  //   目标干阴阳: HEAVENLY_STEMS.indexOf(targetStem) % 2 === 0 ? "阳" : "阴",
-  //   五行关系: dayElement && targetElement ? FIVE_ELEMENTS_RELATIONS[dayElement][targetElement] : undefined
-  // });
-  
   if (!dayElement || !targetElement) {
-    // console.log('五行计算失败:', { dayElement, targetElement });
     return "";
   }
   
   const baseGod = FIVE_ELEMENTS_RELATIONS[dayElement][targetElement];
+  const isDayYang = HEAVENLY_STEMS.indexOf(dayStem) % 2 === 0;
   const isTargetYang = HEAVENLY_STEMS.indexOf(targetStem) % 2 === 0;
   
-  // console.log('十神计算过程:', {
-  //   基础十神: baseGod,
-  //   目标阴阳: isTargetYang ? "阳" : "阴",
-  //   最终十神: baseGod in YIN_YANG_GODS ? YIN_YANG_GODS[baseGod][isTargetYang ? "阳" : "阴"] : baseGod,
-  //   五行关系表: FIVE_ELEMENTS_RELATIONS[dayElement],
-  //   阴阳对应表: YIN_YANG_GODS[baseGod]
-  // });
+  // 根据日主和目标干的阴阳关系确定具体十神
+  // 阳干遇阳干或阴干遇阴干返回阳神，阳干遇阴干或阴干遇阳干返回阴神
+  const isSameYinYang = isDayYang === isTargetYang;
   
-  if (baseGod in YIN_YANG_GODS) {
-    const result = YIN_YANG_GODS[baseGod][isTargetYang ? "阳" : "阴"];
-    // console.log('十神计算结果:', result);
-    return result;
+  switch (baseGod) {
+    case "比劫":
+      return isSameYinYang ? "比肩" : "劫财";
+    case "食神":
+      return isSameYinYang ? "食神" : "伤官";
+    case "偏财":
+      return isSameYinYang ? "偏财" : "正财";
+    case "正官":
+      return isSameYinYang ? "七杀" : "正官";
+    case "正印":
+      return isSameYinYang ? "偏印" : "正印";
+    default:
+      return baseGod;
   }
-  // console.log('十神计算结果:', baseGod);
-  return baseGod;
 }
 
 // 获取地支十神

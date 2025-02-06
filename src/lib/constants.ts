@@ -20,7 +20,7 @@ export const LIFE_STAGES = {
 export type HeavenlyStem = typeof HEAVENLY_STEMS[number];
 export type EarthlyBranch = typeof EARTHLY_BRANCHES[number];
 export type FiveElement = "木" | "火" | "土" | "金" | "水";
-export type TenGodBase = "比劫" | "食神" | "偏财" | "七杀" | "正印";
+export type TenGodBase = "比劫" | "食神" | "偏财" | "正官" | "正印";
 export type YinYang = "阳" | "阴";
 
 // 五行关系类型
@@ -46,7 +46,7 @@ export const FIVE_ELEMENTS_RELATIONS: FiveElementsRelation = {
     "木": "比劫", // 同气为比劫
     "火": "食神", // 生火为食神
     "土": "偏财", // 火生土为偏财
-    "金": "七杀", // 金克木为七杀
+    "金": "正官", // 金克木为正官
     "水": "正印"  // 水生木为正印
   },
   // 日干为火时
@@ -55,11 +55,11 @@ export const FIVE_ELEMENTS_RELATIONS: FiveElementsRelation = {
     "火": "比劫", // 同气为比劫
     "土": "食神", // 生土为食神
     "金": "偏财", // 土生金为偏财
-    "水": "七杀"  // 水克火为七杀
+    "水": "正官"  // 水克火为正官
   },
   // 日干为土时
   "土": {
-    "木": "七杀", // 木克土为七杀
+    "木": "正官", // 木克土为正官
     "火": "正印", // 火生土为正印
     "土": "比劫", // 同气为比劫
     "金": "食神", // 生金为食神
@@ -68,7 +68,7 @@ export const FIVE_ELEMENTS_RELATIONS: FiveElementsRelation = {
   // 日干为金时
   "金": {
     "木": "偏财", // 木生火为偏财
-    "火": "七杀", // 火克金为七杀
+    "火": "正官", // 火克金为正官
     "土": "正印", // 土生金为正印
     "金": "比劫", // 同气为比劫
     "水": "食神"  // 生水为食神
@@ -77,7 +77,7 @@ export const FIVE_ELEMENTS_RELATIONS: FiveElementsRelation = {
   "水": {
     "木": "食神", // 生木为食神
     "火": "偏财", // 木生火为偏财
-    "土": "七杀", // 土克水为七杀
+    "土": "正官", // 土克水为正官
     "金": "正印", // 金生水为正印
     "水": "比劫"  // 同气为比劫
   }
@@ -89,6 +89,6 @@ export const YIN_YANG_GODS: YinYangGodsType = {
   "比劫": {"阳": "比肩", "阴": "劫财"},   // 同气，阳为比肩，阴为劫财
   "食神": {"阳": "食神", "阴": "伤官"},   // 我生，阳为食神，阴为伤官
   "偏财": {"阳": "偏财", "阴": "正财"},   // 我生所生，阳为偏财，阴为正财
-  "七杀": {"阳": "七杀", "阴": "正官"},   // 克我，阳为七杀，阴为正官
+  "正官": {"阳": "正官", "阴": "七杀"},   // 克我，阳为正官，阴为七杀
   "正印": {"阳": "偏印", "阴": "正印"}    // 生我，阳为偏印，阴为正印
 } as const; 
