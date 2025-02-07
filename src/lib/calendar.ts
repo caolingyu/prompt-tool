@@ -97,18 +97,29 @@ export function getDayPillar(date: SolarDate): PillarInfo {
   const lunar = Lunar.fromSolar(solar);
   
   // 获取日干支
-  const dayGanZhi = lunar.getDayInGanZhi();
+  let dayGanZhi: string;
+  
+  // 处理子时跨日的情况
+  if (date.hour === 23) {
+    // 如果是23点，使用第二天的日柱
+    // 使用 dayjs 处理日期进位
+    const nextDay = dayjs(`${date.year}-${date.month}-${date.day}`).add(1, 'day');
+    const nextDaySolar = Solar.fromYmdHms(
+      nextDay.year(),
+      nextDay.month() + 1, // dayjs 的月份是 0-11
+      nextDay.date(),
+      12,
+      0,
+      0
+    );
+    const nextDayLunar = Lunar.fromSolar(nextDaySolar);
+    dayGanZhi = nextDayLunar.getDayInGanZhi();
+  } else {
+    dayGanZhi = lunar.getDayInGanZhi();
+  }
+  
   const [stem, branch] = splitGanZhi(dayGanZhi);
-  
   const branchGods = getBranchGods(stem, branch);
-  
-  // console.log('八字日柱计算:', {
-  //   日干支: dayGanZhi,
-  //   日干: stem,
-  //   日支: branch,
-  //   藏干: branchGods,
-  //   五行: getFiveElements(stem, branch)
-  // });
   
   return {
     stem,
@@ -124,12 +135,24 @@ export function getDayPillar(date: SolarDate): PillarInfo {
 export function getHourPillar(date: SolarDate, dayStem: HeavenlyStem): PillarInfo {
   // 将小时转换为时辰（二小时为一个时辰，从23:00-1:00开始为子时）
   let hour = date.hour;
+  let useNextDayStem = false;
   
   // 处理子时跨日的情况
-  if (hour === 23) {
-    hour = 0;  // 23:00-23:59 算作子时（第二天的开始）
-  } else if (hour === 0) {
-    hour = 0;  // 0:00-0:59 也算作子时
+  if (hour === 23 || hour === 0) {
+    useNextDayStem = true;  // 子时使用第二天的日干
+    hour = 0;  // 统一算作子时
+  }
+  
+  // 如果是子时，需要使用第二天的日干
+  if (useNextDayStem) {
+    const nextDayDate = {
+      ...date,
+      day: date.hour === 23 ? date.day + 1 : date.day  // 23点时才需要加一天
+    };
+    const solar = Solar.fromYmdHms(nextDayDate.year, nextDayDate.month, nextDayDate.day, 12, 0, 0); // 用中午12点避免跨日问题
+    const lunar = Lunar.fromSolar(solar);
+    const nextDayGanZhi = lunar.getDayInGanZhi();
+    dayStem = nextDayGanZhi[0] as HeavenlyStem;  // 使用第二天的日干
   }
   
   // 计算时辰地支
